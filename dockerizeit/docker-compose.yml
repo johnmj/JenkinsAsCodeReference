@@ -13,6 +13,7 @@ services:
       - "8080:8080"
       - "50000:50000"
     volumes:
+      - /etc/localtime:/etc/localtime
       - $HOME/.ssh:/var/jenkins_home/.ssh
       - $HOME/jenkins-backup/jobs:/var/jenkins_home/jobs
       - $HOME/jenkins-backup/userContent:/var/jenkins_home/userContent
@@ -25,6 +26,7 @@ services:
         - https_proxy
         - no_proxy
     volumes:
+      - /etc/localtime:/etc/localtime
       - /var/run/docker.sock:/var/run/docker.sock
       - /var/lib/docker:/var/lib/docker
       - $HOME/jenkins-backup/slave/gradle:/root/.gradle
@@ -35,6 +37,7 @@ services:
     ports:
       - 5000:5000
     volumes:
+      - /etc/localtime:/etc/localtime
       - $HOME/jenkins-backup/registry:/var/lib/registry
 
   registry-web:
