@@ -4,6 +4,7 @@ ansicolor
 ant
 antisamy-markup-formatter
 authentication-tokens
+blueocean
 branch-api
 build-flow-plugin
 build-timeout
