@@ -1,22 +1,25 @@
-FROM jenkins:2.7.3
+FROM jenkins:2.32.3
 
-USER jenkins
+#USER jenkins
 # Values should be passed as build args
 # Add support for proxies.
 # http://docs.docker.com/engine/reference/builder/#arg
 ENV http_proxy ${http_proxy:-}
 ENV https_proxy ${https_proxy:-}
 ENV no_proxy ${no_proxy:-}
-#ARG JAVA_OPTS="-Djenkins.install.runSetupWizard=false, -Djenkins.slaves.JnlpSlaveAgentProtocol3.enabled=true"
-ARG JAVA_OPTS="-Djenkins.slaves.JnlpSlaveAgentProtocol3.enabled=true"
-ENV JAVA_OPTS ${JAVA_OPTS:-}
+#ARG JAVA_OPTS="-Djenkins.install.runSetupWizard=false -Djenkins.slaves.JnlpSlaveAgentProtocol3.enabled=true -Djenkins.model.Jenkins.slaveAgentPort=41392"
+ARG JAVA_OPTS
+ENV JAVA_OPTS "-Djenkins.install.runSetupWizard=false ${JAVA_OPTS:-}"
+ENV JENKINS_SLAVE_AGENT_PORT 43504
 # Define build argument and env variable master_image_version
 # Use to pass info about Jenkins version so it can be represented
 # for the users.
 ARG master_image_version="local build"
 ENV master_image_version $master_image_version
 
-CMD ["--prefix=/jenkins -Djenkins.install.runSetupWizard=false"]
+#CMD ["--prefix=/jenkins -Djenkins.install.runSetupWizard=false"]
+CMD ["--prefix=/jenkins"]
+
 
 # Install plugins
 COPY plugins.txt /usr/share/jenkins/plugins.txt
@@ -26,11 +29,12 @@ RUN /usr/local/bin/install-plugins.sh $(cat /usr/share/jenkins/plugins.txt | tr 
 
 # Copy configuration scripts that will be executed by groovy
 COPY *.groovy /usr/share/jenkins/ref/init.groovy.d/
-COPY basic-security.groovy $JENKINS_HOME/init.groovy.d/basic-security.groovy
+#COPY *.groovy $JENKINS_HOME/init.groovy.d/
+#COPY basic-security.groovy $JENKINS_HOME/init.groovy.d/basic-security.groovy
 COPY *.properties $JENKINS_HOME/
 
 # Indicate not to run wizard
-RUN echo 2.7.3 > /usr/share/jenkins/ref/jenkins.install.UpgradeWizard.state
+RUN echo 2.32.3 > /usr/share/jenkins/ref/jenkins.install.UpgradeWizard.state
 
 #USER root
 #USER jenkins

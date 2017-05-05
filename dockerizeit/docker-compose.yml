@@ -3,7 +3,7 @@ version: "2"
 services:
   jmaster:
     build:
-      context: master/
+      context: ./master
       args:
         - http_proxy
         - https_proxy
@@ -12,17 +12,19 @@ services:
     ports:
       - "8090:8080"
       - "50001:50000"
+      - "43504:43504"
     volumes:
       - $HOME/.ssh:/var/jenkins_home/.ssh
-      - $HOME/.ssh/.password:/var/jenkins_home/.ssh/.password
+#      - $HOME/.ssh/.password:/var/jenkins_home/.ssh/.password
       - $HOME/jenkins-backup/jobs:/var/jenkins_home/jobs
       - $HOME/jenkins-backup/userContent:/var/jenkins_home/userContent
+      - /etc/localtime:/etc/localtime
     command: [--prefix=/jenkins]
     hostname: Jenkins_master_1
 
   jslave:
     build:
-      context: slave/
+      context: ./slave
       args:
         - http_proxy
         - https_proxy
@@ -32,11 +34,12 @@ services:
       - /var/lib/docker:/var/lib/docker
       - $HOME/jenkins-backup/slave/gradle:/root/.gradle
       - $HOME/jenkins-backup/workspace:/root/workspace
+      - /etc/localtime:/etc/localtime
     hostname: Slave1
 
   jslave2:
     build:
-      context: slave/
+      context: ./slave
       dockerfile: jslave2_Dockerfile
       args:
         - http_proxy
@@ -47,6 +50,7 @@ services:
       - /var/lib/docker:/var/lib/docker
       - $HOME/jenkins-backup/slave/gradle:/root/.gradle
       - $HOME/jenkins-backup/workspace:/root/workspace
+      - /etc/localtime:/etc/localtime
     hostname: Slave2
 
   #registry:
